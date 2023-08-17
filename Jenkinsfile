@@ -1,18 +1,15 @@
-node {
-    def myContainer = docker.image('node:16-buster-slim').withRun('-p 3000:3000') 
-
-    try {
-        stage('Checkout') {
-            checkout scm
+pipeline {
+    agent {
+        docker {
+            image 'node:16-buster-slim' 
+            args '-p 3000:3000' 
         }
-
-        stage('Build') {
-            myContainer.inside {
+    }
+    stages {
+        stage('Build') { 
+            steps {
                 sh 'npm install'
             }
         }
-    } finally {
-        myContainer.stop()
     }
 }
-
