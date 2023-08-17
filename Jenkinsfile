@@ -1,8 +1,27 @@
-node {
-    checkout scm
-    docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build') {
-            sh 'npm install'
+            steps {
+                script {
+                    docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './jenkins/scripts/test.sh'
+            }
         }
     }
 }
+
