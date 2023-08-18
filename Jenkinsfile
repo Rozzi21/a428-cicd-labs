@@ -1,4 +1,4 @@
-node {
+node  {
     def dockerImage = 'node:16-buster-slim'
 
     stage('Build') {
