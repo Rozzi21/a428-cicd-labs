@@ -1,29 +1,26 @@
-pipeline {
-    agent any
+node {
+    // Define Docker image and port mapping
+    def dockerImage = 'node:16-buster-slim'
+    def dockerArgs = '-p 3000:3000'
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
+    // Stage: Build
+    stage('Build') {
+        // Run inside Docker container
+        docker.image(dockerImage).withRun(dockerArgs) { container ->
+            // Run npm install
+            sh 'npm install'
         }
+    }
 
-        stage('Build') {
-            steps {
-                script {
-                    docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-                        sh 'npm install'
-                    }
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                script {
-                         sh './jenkins/scripts/test.sh'
-                }  
-            }
+    // Stage: Test
+    stage('Test') {
+        // Run inside Docker container
+        docker.image(dockerImage).withRun(dockerArgs) { container ->
+            // Run test script
+            sh './jenkins/scripts/test.sh'
         }
     }
 }
+
+
 
